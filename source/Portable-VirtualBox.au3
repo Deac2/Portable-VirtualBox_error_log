@@ -342,11 +342,9 @@ If (FileExists(@ScriptDir&"\app32\virtualbox.exe") OR FileExists(@ScriptDir&"\ap
 			$b += 1
 			$values4 = StringReplace($values4, $a[$i], "")
 			if $i>=$b Then
-			;_LogDuplicate($a[$x])
 			_LogWrite($a[$x], 1)
 			Else
 			_LogWrite($a[$x], 1)
-			;_LogDuplicate($a[$x])
 			EndIf
 			$x = 0
 			EndIf
@@ -549,31 +547,6 @@ Next
 	EndIf
 EndFunc
 
-Func _LogDuplicate($Linetext)
-    Local $filePath = @ScriptDir&"\Portable-VirtualBox.error.txt"
-	FileDelete($filePath)
-    Local $hFile = FileOpen($filePath, 1)
-    If $hFile = -1 Then
-        Return
-    EndIf
-    Local $uuid = _StringBetween($Linetext, 'uuid="', '"')
-    FileWrite($hFile, "[" & @MDAY & "." & @MON & "." & @YEAR & " " & @HOUR & ":" & @MIN & ":" & @SEC & "] Duplicate found with UUID: " & $uuid[0] & @LF)
-    FileWrite($hFile, "[" & @MDAY & "." & @MON & "." & @YEAR & " " & @HOUR & ":" & @MIN & ":" & @SEC & "] Duplicate line: " & $Linetext & @LF)
-    FileWrite($hFile, "----------------------------------------" & @LF)
-    FileClose($hFile)
-EndFunc
-
-Func _LogWrite222($Linetext)
-    Local $filePath = @ScriptDir&"\Portable-VirtualBox.log.txt"
-	FileDelete($filePath)
-    Local $hFile = FileOpen($filePath, 1)
-    If $hFile = -1 Then
-        Return
-    EndIf
-    FileWrite($hFile, "[" & @MDAY & "." & @MON & "." & @YEAR & " " & @HOUR & ":" & @MIN & ":" & @SEC & "] > " & $Linetext & @LF)
-    FileClose($hFile)
-EndFunc
-
 Func _LogWrite($Linetext, $LogType = 0)
     Local $fileName = ($LogType = 1) ? "\Portable-VirtualBox.error.txt" : "\Portable-VirtualBox.log.txt"
     Local $filePath = @ScriptDir & $fileName
@@ -592,7 +565,6 @@ Func _LogWrite($Linetext, $LogType = 0)
         FileWrite($hFile, $TimeStamp & "Duplicate line: " & $Linetext & @CRLF)
         FileWrite($hFile, "----------------------------------------" & @CRLF)
     Else
-        ;FileWrite($hFile, $TimeStamp & "> " & $Linetext & @CRLF)
 		FileWrite($hFile, $TimeStamp & "> " & $Linetext & @CRLF)
     EndIf
     
