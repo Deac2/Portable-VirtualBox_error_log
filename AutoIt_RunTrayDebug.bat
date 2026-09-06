@@ -1,0 +1,75 @@
+@echo off
+@title Run AutoIt Source Tray Debug [%CD%]
+@chcp 65001>Nul
+
+rem Set the default relative path
+set "AutoIt3=source\AutoIt3.exe"
+
+rem Setting up the different folders used for building. %~dp0 is the folder of the build script itself (may not be the same as the working directory).
+set "input_folder=%~dp0"
+rem set "build_folder=%input_folder%build"
+
+rem Find path for AutoIt3
+rem If the user supplied a AutoIt3 path use it
+IF exist "%~dp0%AutoIt3%" (
+    set "AutoIt3=%~dp0%AutoIt3%"
+    echo [INFO] Custom AutoIt3 path detected.
+    goto done_AutoIt3
+)
+
+rem Try to find the AutoIt3 path.
+set "PPATH=%ProgramFiles%\AutoIt3\AutoIt3.exe"
+IF exist "%PPATH%" (
+    set "AutoIt3=%PPATH%"
+    goto done_AutoIt3
+) 
+
+set "PPATH=%ProgramFiles(x86)%\AutoIt3\AutoIt3.exe"
+IF exist "%PPATH%" (
+    set "AutoIt3=%PPATH%"
+    goto done_AutoIt3
+)
+
+:done_AutoIt3
+IF not exist "%AutoIt3%" (
+    echo [ERROR] AutoIt3 not found. Is it installed?
+    echo Please set the AutoIt3 variable for non-standard paths: %AutoIt3%
+    PAUSE
+    EXIT /B
+)
+
+:MainMenu
+cls
+echo AutoIt3 path: %AutoIt3%
+echo.
+Tasklist /FI "IMAGENAME eq AutoIt3.exe" 2>Nul|findstr "= # AutoIt3" && echo.
+
+echo Enter the number:
+echo 1 -^>^ Run script execution
+echo 2 -^>^ Exit or close console to cancel
+echo.
+
+Set /p choice="Write a number to continue: "
+if "%choice%"=="1" goto Start
+if "%choice%"=="2" (exit)
+goto MainMenu
+
+:Start
+cls
+echo Wait for the Portable-VirtualBox source code to run,
+echo all data is in folder source
+echo.&
+echo You can minimize the console if you need to restart it after closing
+echo Portable-VirtualBox, you will return to the menu, if the console is
+echo no longer needed, you can close it manually
+
+wmic process where "name='AutoIt3.exe'" get CommandLine | find /I "Portable-VirtualBox.au3" >nul
+if %errorlevel%==1 (
+rem Launch Portable-VirtualBox.
+xcopy /d /c /e /i /y "%input_folder%source\src_data\tools" "%input_folder%source\data\tools" > nul 2>&1
+start "" "%AutoIt3%" "%input_folder%source\Portable-VirtualBox.au3"
+Set choice=
+)
+
+timeout /t 2 >nul
+goto MainMenu
