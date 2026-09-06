@@ -1687,15 +1687,15 @@ Func _Start_VirtualBox()
     EndIf
 
     If _RegRead("HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\VBoxUSBMon", "DisplayName") <> "Portable VirtualBox USB Monitor Driver" Then
-        RunWait("cmd /c sc create VBoxUSBMon binpath= ""%CD%\" & $App_Dir & "\drivers\USB\filter\VBoxUSBMon.sys"" type= kernel start= auto error= normal displayname=""Portable VirtualBox USB Monitor Driver""", @ScriptDir, @SW_HIDE)
+        ;RunWait("cmd /c sc create VBoxUSBMon binpath= ""%CD%\" & $App_Dir & "\drivers\USB\filter\VBoxUSBMon.sys"" type= kernel start= auto error= normal displayname=""Portable VirtualBox USB Monitor Driver""", @ScriptDir, @SW_HIDE)
 		_RunWait("cmd /c sc create VBoxUSBMon binpath= ""%CD%\" & $App_Dir & "\drivers\USB\filter\VBoxUSBMon.sys"" type= kernel start= auto error= normal displayname=""Portable VirtualBox USB Monitor Driver""", @ScriptDir, @SW_HIDE)
         RunWait("sc start VBoxUSBMon", @ScriptDir, @SW_HIDE)
 		If Number($logfile) Then _RunWait("sc query VBoxUSBMon", @ScriptDir, @SW_HIDE)
     EndIf
 
     If IniRead($var1, "usb", "key", "NotFound") = 1 Then
-		If StringInStr(_RegRead("HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\VBoxUSB", "DisplayName"), "VBoxUSB") = 0 Then
-        ;If _RegRead("HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\VBoxUSB", "DisplayName") <> "VirtualBox USB" Then
+		;If StringInStr(_RegRead("HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\VBoxUSB", "DisplayName"), "VBoxUSB") = 0 Then
+        If _RegRead("HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\VBoxUSB", "DisplayName") <> "VirtualBox USB" Then
             ;RunWait(@ScriptDir & "\data\tools\devcon_" & $OsArch & ".exe install " & $App_Dir & "\drivers\USB\device\VBoxUSB.inf ""USB\VID_80EE&PID_CAFE""", @ScriptDir, @SW_HIDE)
 			RunWait("""" & @ScriptDir & "\data\tools\devcon_" & $OsArch & ".exe"" install """ & $App_Dir & "\drivers\USB\device\VBoxUSB.inf"" ""USB\VID_80EE&PID_CAFE""", @ScriptDir, @SW_HIDE)
 			_RunWait("""" & @ScriptDir & "\data\tools\devcon_" & $OsArch & ".exe"" install """ & $App_Dir & "\drivers\USB\device\VBoxUSB.inf"" ""USB\VID_80EE&PID_CAFE""", @ScriptDir, @SW_HIDE)
@@ -1707,8 +1707,8 @@ Func _Start_VirtualBox()
 
     If IniRead($var1, "net", "key", "NotFound") = 1 Then
         Local $ADPVER = (FileExists(@ScriptDir & "\" & $App_Dir & "\drivers\network\netadp6") ? 6 : "")
-		If StringInStr(_RegRead("HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\VBoxNetAdp", "DisplayName"), "VBoxNetAdp") = 0 Then
-        ;If _RegRead("HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\VBoxNetAdp", "DisplayName") <> "VirtualBox Host-Only Network Adapter" Then
+		;If StringInStr(_RegRead("HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\VBoxNetAdp", "DisplayName"), "VBoxNetAdp") = 0 Then
+        If _RegRead("HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\VBoxNetAdp", "DisplayName") <> "VirtualBox Host-Only Network Adapter" Then
             ;RunWait(@ScriptDir & "\data\tools\devcon_" & $OsArch & ".exe install " & $App_Dir & "\drivers\network\netadp" & $ADPVER & "\VBoxNetAdp" & $ADPVER & ".inf ""sun_VBoxNetAdp""", @ScriptDir, @SW_HIDE)
 			RunWait("""" & @ScriptDir & "\data\tools\devcon_" & $OsArch & ".exe"" install """ & $App_Dir & "\drivers\network\netadp" & $ADPVER & "\VBoxNetAdp" & $ADPVER & ".inf"" ""sun_VBoxNetAdp""", @ScriptDir, @SW_HIDE)
 			_RunWait("""" & @ScriptDir & "\data\tools\devcon_" & $OsArch & ".exe"" install """ & $App_Dir & "\drivers\network\netadp" & $ADPVER & "\VBoxNetAdp" & $ADPVER & ".inf"" ""sun_VBoxNetAdp""", @ScriptDir, @SW_HIDE)
@@ -1719,21 +1719,19 @@ Func _Start_VirtualBox()
     EndIf
 
     If IniRead($var1, "net", "key", "NotFound") = 1 Then
-        ;If _RegRead("HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\VBoxNetFlt", "DisplayName") <> "VBoxNetFlt Service" Then
-		If StringInStr(_RegRead("HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\VBoxNetFlt", "DisplayName"), "VBoxNetFlt") = 0 Then
+        If _RegRead("HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\VBoxNetFlt", "DisplayName") <> "VBoxNetFlt Service" Then
+		;If StringInStr(_RegRead("HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\VBoxNetFlt", "DisplayName"), "VBoxNetFlt") = 0 Then
             ;RunWait(@ScriptDir & "\data\tools\snetcfg_" & $OsArch & ".exe -v -u ""sun_VBoxNetFlt""", @ScriptDir, @SW_HIDE)
-			;RunWait("""" & @ScriptDir & "\data\tools\snetcfg_" & $OsArch & ".exe"" -v -u ""sun_VBoxNetFlt""", @ScriptDir, @SW_HIDE)
-			_RunWait("""" & @ScriptDir & "\data\tools\snetcfg_" & $OsArch & ".exe"" -v -u ""sun_VBoxNetFlt""", @ScriptDir, @SW_HIDE)
+			RunWait("""" & @ScriptDir & "\data\tools\snetcfg_" & $OsArch & ".exe"" -v -u ""sun_VBoxNetFlt""", @ScriptDir, @SW_HIDE)
             ;RunWait(@ScriptDir & "\data\tools\snetcfg_" & $OsArch & ".exe -v -l " & $App_Dir & "\drivers\network\netflt\VBoxNetFlt.inf -m " & $App_Dir & "\drivers\network\netflt\VBoxNetFlt.inf -c s -i ""sun_VBoxNetFlt""", @ScriptDir, @SW_HIDE)
 			RunWait("""" & @ScriptDir & "\data\tools\snetcfg_" & $OsArch & ".exe"" -v -l """ & $App_Dir & "\drivers\network\netflt\VBoxNetFlt.inf"" -m """ & $App_Dir & "\drivers\network\netflt\VBoxNetFlt.inf"" -c s -i sun_VBoxNetFlt", @ScriptDir, @SW_HIDE)
-			_RunWait("""" & @ScriptDir & "\data\tools\snetcfg_" & $OsArch & ".exe"" -v -l """ & $App_Dir & "\drivers\network\netflt\VBoxNetFlt.inf"" -m """ & $App_Dir & "\drivers\network\netflt\VBoxNetFlt.inf"" -c s -i sun_VBoxNetFlt", @ScriptDir, @SW_HIDE)
             FileCopy(@ScriptDir & "\" & $App_Dir & "\drivers\network\netflt\VBoxNetFltNobj.dll", @WindowsDir & "\System32", 9)
             FileCopy(@ScriptDir & "\" & $App_Dir & "\drivers\network\netflt\VBoxNetFlt.sys", @WindowsDir & "\System32\drivers", 9)
             RunWait(@SystemDir & "\regsvr32.exe /S " & @WindowsDir & "\System32\VBoxNetFltNobj.dll", @WindowsDir & "\System32", @SW_HIDE)
             RunWait("sc start VBoxNetFlt", @ScriptDir, @SW_HIDE)
-			If Number($logfile) Then _RunWait("sc query VBoxNetFlt", @ScriptDir, @SW_HIDE)
         EndIf
-		If StringInStr(_RegRead("HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\VBoxNetLwf", "DisplayName"), "VBoxNetLwf") = 0 Then
+		If _RegRead("HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\VBoxNetLwf", "DisplayName") <> "VBoxNetLwf Service" Then
+		;If StringInStr(_RegRead("HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\VBoxNetLwf", "DisplayName"), "VBoxNetLwf") = 0 Then
             ;RunWait(@ScriptDir & "\data\tools\snetcfg_" & $OsArch & ".exe -v -u ""oracle_VBoxNetLwf""", @ScriptDir, @SW_HIDE)
 			RunWait("""" & @ScriptDir & "\data\tools\snetcfg_" & $OsArch & ".exe"" -v -u ""oracle_VBoxNetLwf""", @ScriptDir, @SW_SHOW)
 			_RunWait("""" & @ScriptDir & "\data\tools\snetcfg_" & $OsArch & ".exe"" -v -u ""oracle_VBoxNetLwf""", @ScriptDir, @SW_HIDE)
